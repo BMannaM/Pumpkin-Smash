@@ -35,13 +35,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         hammer = Hammer()
         hammer.position = CGPoint(x: size.width / 2, y: size.height / 2)
         hammer.gameScene = self
-//        hammer.physicsBody = SKPhysicsBody(rectangleOf: hammer.size)
-//        hammer.physicsBody?.isDynamic = true
-//        hammer.physicsBody?.affectedByGravity = false
+        // Manage hammer collision
         hammer.physicsBody?.categoryBitMask = PhysicsCategory.hammer
         hammer.physicsBody?.contactTestBitMask = PhysicsCategory.pumpkin
         hammer.physicsBody?.collisionBitMask = PhysicsCategory.none
-//        hammer.physicsBody?.allowsRotation = false
+        
         addChild(hammer)
         backgroundColor = .black
         scoreLabel = self.childNode(withName: "//score") as? SKLabelNode
