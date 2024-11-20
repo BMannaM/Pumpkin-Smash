@@ -26,6 +26,10 @@ class Hammer: SKSpriteNode {
         self.anchorPoint = CGPoint(x: 0, y: 0)
         self.zPosition = 1
         
+        // Set initial angle to show as vertical hammer
+        self.zRotation = CGFloat.pi / 4
+        hammerAxisAngle = CGFloat.pi / 4
+        
         self.physicsBody = SKPhysicsBody(texture: texture, size: self.size)
         self.physicsBody?.isDynamic = true
         self.physicsBody?.affectedByGravity = false

@@ -35,13 +35,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         hammer = Hammer()
         hammer.position = CGPoint(x: size.width / 2, y: size.height / 2)
         hammer.gameScene = self
-        hammer.physicsBody = SKPhysicsBody(rectangleOf: hammer.size)
-        hammer.physicsBody?.isDynamic = true
-        hammer.physicsBody?.affectedByGravity = false
+//        hammer.physicsBody = SKPhysicsBody(rectangleOf: hammer.size)
+//        hammer.physicsBody?.isDynamic = true
+//        hammer.physicsBody?.affectedByGravity = false
         hammer.physicsBody?.categoryBitMask = PhysicsCategory.hammer
         hammer.physicsBody?.contactTestBitMask = PhysicsCategory.pumpkin
         hammer.physicsBody?.collisionBitMask = PhysicsCategory.none
-        hammer.physicsBody?.allowsRotation = false
+//        hammer.physicsBody?.allowsRotation = false
         addChild(hammer)
         backgroundColor = .black
         scoreLabel = self.childNode(withName: "//score") as? SKLabelNode
@@ -119,6 +119,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         hammer.handleHorizontalWrapping(screenWidth: screenWidth, edgeThreshold: edgeThreshold)
         hammer.handleVerticalWrapping(screenHeight: screenHeight, edgeThreshold: edgeThreshold)
         hammer.handleDiagonalWrapping(screenWidth: screenWidth, screenHeight: screenHeight, edgeThreshold: edgeThreshold)
+        
+        // Update the dotted line's endpoint to the hammer's current position
+        if isTouching {
+            drawDottedLine(from: dot1!.position, to: hammer.position)
+        }
     }
     
     // Rotate the hammer based on touch input
@@ -146,16 +151,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         // Avoid zero division
         guard forceMagnitude > 0 else { return }
         
-        // Determine the maximum allowable force magnitude
-//        let maxForce = maxForceMagnitude
-        
         // Avoid too large force
         let scale = min(forceMagnitude, maxForceMagnitude) / forceMagnitude
         forceVector.dx *= scale
         forceVector.dy *= scale
 //        print(scale)
         
-        // Apply the force to the hammer's physics body
         hammer.physicsBody?.applyForce(forceVector)
     }
     
@@ -185,37 +186,49 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             updateScoreLabel()
         }
     }
+    
     func drawDottedLine(from start: CGPoint, to end: CGPoint) {
-        // Remove dotted line if exists
-        dottedLine?.removeFromParent()
-        
-        let path = CGMutablePath()
-        path.move(to: start)
-        path.addLine(to: end)
-        
-        let dashedPattern: [CGFloat] = [10.0, 5.0]
-        let dashedPath = path.copy(dashingWithPhase: 0, lengths: dashedPattern)
-        
-        dottedLine = SKShapeNode(path: dashedPath)
-        dottedLine?.strokeColor = .gray
-        dottedLine?.lineWidth = 2
-        dottedLine?.zPosition = 1
-        addChild(dottedLine!)
+        if let dottedLine = dottedLine {
+            // Update the path of the existing dotted line
+            let path = CGMutablePath()
+            path.move(to: start)
+            path.addLine(to: end)
+            let dashedPattern: [CGFloat] = [10.0, 5.0]
+            let dashedPath = path.copy(dashingWithPhase: 0, lengths: dashedPattern)
+            dottedLine.path = dashedPath
+        } else {
+            // Create the dotted line if it doesn't exist
+            let path = CGMutablePath()
+            path.move(to: start)
+            path.addLine(to: end)
+            let dashedPattern: [CGFloat] = [10.0, 5.0]
+            let dashedPath = path.copy(dashingWithPhase: 0, lengths: dashedPattern)
+            dottedLine = SKShapeNode(path: dashedPath)
+            dottedLine?.strokeColor = .gray
+            dottedLine?.lineWidth = 2
+            dottedLine?.zPosition = 1
+            addChild(dottedLine!)
+        }
     }
     
     func drawSolidLine(from start: CGPoint, to end: CGPoint) {
-        // Remove solid line if exists
-        solidLine?.removeFromParent()
-        
-        let path = CGMutablePath()
-        path.move(to: start)
-        path.addLine(to: end)
-        
-        solidLine = SKShapeNode(path: path)
-        solidLine?.strokeColor = .green
-        solidLine?.lineWidth = 2
-        solidLine?.zPosition = 1
-        addChild(solidLine!)
+        if let solidLine = solidLine {
+            // Update the path of the existing solid line
+            let path = CGMutablePath()
+            path.move(to: start)
+            path.addLine(to: end)
+            solidLine.path = path
+        } else {
+            // Create the solid line if it doesn't exist
+            let path = CGMutablePath()
+            path.move(to: start)
+            path.addLine(to: end)
+            solidLine = SKShapeNode(path: path)
+            solidLine?.strokeColor = .systemGreen
+            solidLine?.lineWidth = 2
+            solidLine?.zPosition = 1
+            addChild(solidLine!)
+        }
     }
     
     func enableBulletTime() {
