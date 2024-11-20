@@ -8,7 +8,12 @@
 import SpriteKit
 import GameplayKit
 
-class GameScene: SKScene {
+class GameScene: SKScene , SKPhysicsContactDelegate {
+    struct PhysicsCategory {
+        static let none: UInt32 = 0
+        static let hammer: UInt32 = 0b1
+        static let pumpkin: UInt32 = 0b10
+    }
     
     var hammer: Hammer!
     
@@ -17,6 +22,13 @@ class GameScene: SKScene {
     var dottedLine: SKShapeNode?
     var solidLine: SKShapeNode?
     var isTouching = false
+    var score = 0
+    let pumpkinTexture = SKTexture(imageNamed: "pumpkin")
+    var scoreLabel: SKLabelNode!
+    var timeLabel: SKLabelNode!
+    var timeRemaining = 15
+    var countdownTimer: Timer?
+    var isGameRunning = false
 
     let maxForceMagnitude: CGFloat = 800.0
     let bulletTimeSpeed: CGFloat = 0.2
@@ -25,7 +37,18 @@ class GameScene: SKScene {
         hammer = Hammer()
         hammer.position = CGPoint(x: size.width / 2, y: size.height / 2)
         hammer.gameScene = self
+        hammer.physicsBody?.categoryBitMask = PhysicsCategory.hammer
+        hammer.physicsBody?.contactTestBitMask = PhysicsCategory.pumpkin
+        hammer.physicsBody?.collisionBitMask = PhysicsCategory.none
         addChild(hammer)
+        backgroundColor = .black
+        scoreLabel = self.childNode(withName: "//score") as? SKLabelNode
+        timeLabel = self.childNode(withName: "//time") as? SKLabelNode
+        timeLabel.text = "Time: \(timeRemaining)"
+    }
+    
+    func updateScoreLabel() {
+        scoreLabel.text = "Score: \(score)"
     }
     
     // Touch began
@@ -33,7 +56,11 @@ class GameScene: SKScene {
         guard let touch = touches.first else { return }
         isTouching = true
         let touchLocation = touch.location(in: self)
-        
+        if !isGameRunning {
+            isGameRunning = true
+            startNewRound()
+    }
+        isTouching = true
         enableBulletTime()
         
         // Create Red dot1 at touch location
@@ -145,6 +172,21 @@ class GameScene: SKScene {
         dottedLine = nil
         solidLine = nil
     }
+    func didBegin(_ contact: SKPhysicsContact) {
+        let collision = contact.bodyA.categoryBitMask | contact.bodyB.categoryBitMask
+        
+        if collision == PhysicsCategory.hammer | PhysicsCategory.pumpkin {
+            // Determine which node is the pumpkin
+            let pumpkinNode = contact.bodyA.categoryBitMask == PhysicsCategory.pumpkin ? contact.bodyA.node : contact.bodyB.node
+            
+            // Remove the pumpkin from the scene
+            pumpkinNode?.removeFromParent()
+            
+            // Increment the score
+            score += 1
+            updateScoreLabel()
+        }
+    }
     
     func drawDottedLine(from start: CGPoint, to end: CGPoint) {
         if let dottedLine = dottedLine {
@@ -198,5 +240,66 @@ class GameScene: SKScene {
     func disableBulletTime() {
         self.speed = 1.0
         self.physicsWorld.speed = 1.0
+    }
+    
+    func startNewRound() {
+        isGameRunning = true
+        timeRemaining = 15
+        timeLabel.text = "Time: \(timeRemaining)"
+        startSpawningPumpkins()
+        startCountdownTimer()
+    }
+    
+    func startSpawningPumpkins() {
+        let spawn = SKAction.run {
+            self.spawnPumpkin()
+        }
+        let wait = SKAction.wait(forDuration: 0.3, withRange: 0.2)
+        let sequence = SKAction.sequence([spawn, wait])
+        let continuousSpawn = SKAction.repeatForever(sequence)
+        run(continuousSpawn, withKey: "spawningPumpkins")
+    }
+    
+    func startCountdownTimer() {
+        countdownTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
+            if self.timeRemaining > 0 {
+                self.timeRemaining -= 1
+                self.timeLabel.text = "Time: \(self.timeRemaining)"
+            }
+            if self.timeRemaining <= 0 {
+                self.countdownTimer?.invalidate()
+                self.countdownTimer = nil
+                self.stopGame()
+            }
+        }
+    }
+    
+    func stopGame() {
+        self.removeAction(forKey: "spawningPumpkins")
+        isGameRunning = false
+        self.enumerateChildNodes(withName: "pumpkin") { node, _ in
+            node.removeFromParent()
+        }
+    }
+    
+    func spawnPumpkin() {
+        let pumpkin = SKSpriteNode(texture: pumpkinTexture)
+        pumpkin.size = CGSize(width: 50, height: 50)
+        let randomYPosition = CGFloat.random(in: 50...(size.height - 50))
+        pumpkin.position = CGPoint(x: -50, y: randomYPosition)
+        pumpkin.zPosition = 1
+        pumpkin.name = "pumpkin"
+        pumpkin.physicsBody = SKPhysicsBody(rectangleOf: pumpkin.size)
+        pumpkin.physicsBody?.isDynamic = true
+        pumpkin.physicsBody?.affectedByGravity = false
+        pumpkin.physicsBody?.categoryBitMask = PhysicsCategory.pumpkin
+        pumpkin.physicsBody?.contactTestBitMask = PhysicsCategory.hammer
+        pumpkin.physicsBody?.collisionBitMask = PhysicsCategory.none
+        addChild(pumpkin)
+
+        let moveToRight = SKAction.moveTo(x: size.width + 50, duration: 5.0)
+        let remove = SKAction.removeFromParent()
+        let sequence = SKAction.sequence([moveToRight, remove])
+        pumpkin.run(sequence)
     }
 }
