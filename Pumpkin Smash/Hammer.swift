@@ -26,6 +26,10 @@ class Hammer: SKSpriteNode {
         self.anchorPoint = CGPoint(x: 0, y: 0)
         self.zPosition = 1
         
+        // Set initial angle to show as vertical hammer
+        self.zRotation = CGFloat.pi / 4
+        hammerAxisAngle = CGFloat.pi / 4
+        
         self.physicsBody = SKPhysicsBody(texture: texture, size: self.size)
         self.physicsBody?.isDynamic = true
         self.physicsBody?.affectedByGravity = false
@@ -35,9 +39,9 @@ class Hammer: SKSpriteNode {
         self.physicsBody?.angularDamping = 1.0
         self.physicsBody?.mass = 0.01
         
-        // TEST: Yellow handleEndPoint
+        // TEST: Orange handleEndPoint
         handleEndPoint = SKShapeNode(circleOfRadius: 5)
-        handleEndPoint.fillColor = .yellow
+        handleEndPoint.fillColor = .systemOrange
         handleEndPoint.zPosition = 2
         handleEndPoint.position = CGPoint(x: 0, y: 0)
         addChild(handleEndPoint)
@@ -47,7 +51,7 @@ class Hammer: SKSpriteNode {
         hammerTopPoint.fillColor = .purple
         hammerTopPoint.zPosition = 2
         hammerTopPoint.position = CGPoint(x: size.width, y: size.height)
-        addChild(hammerTopPoint)
+//        addChild(hammerTopPoint)
     }
     
     required init?(coder aDecoder: NSCoder) {
