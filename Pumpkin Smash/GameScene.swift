@@ -7,6 +7,7 @@
 
 import SpriteKit
 import GameplayKit
+import AVFoundation
 
 class GameScene: SKScene, SKPhysicsContactDelegate {
     
@@ -31,6 +32,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var timeRemaining = 15
     var countdownTimer: Timer?
     var isGameRunning = false
+    var backgroundMusicPlayer: AVAudioPlayer?
+    var hitSoundEffectPlayer: AVAudioPlayer?
     
     override func didMove(to view: SKView) {
         physicsWorld.contactDelegate = self
@@ -58,11 +61,43 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         scoreLabel.fontName = fontName
         timeLabel.fontSize = fontSize
         timeLabel.fontName = fontName
+        
+        setupBackgroundMusic()
+        setupHitSoundEffect()
     }
     
     func updateScoreLabel() {
         scoreLabel.text = "Score: \(score)"
     }
+    
+    func setupBackgroundMusic() {
+            if let musicURL = Bundle.main.url(forResource: "game bgm", withExtension: "mp3") {
+                do {
+                    backgroundMusicPlayer = try AVAudioPlayer(contentsOf: musicURL)
+                    backgroundMusicPlayer?.numberOfLoops = -1 // Loop indefinitely
+                    backgroundMusicPlayer?.volume = 0.5
+                    backgroundMusicPlayer?.play()
+                } catch {
+                    print("Error loading background music: \(error)")
+                }
+            }
+        }
+    
+    func setupHitSoundEffect() {
+            if let soundURL = Bundle.main.url(forResource: "smash sound", withExtension: "mp3") {
+                do {
+                    hitSoundEffectPlayer = try AVAudioPlayer(contentsOf: soundURL)
+                    hitSoundEffectPlayer?.prepareToPlay()
+                } catch {
+                    print("Error loading hit sound effect: \(error)")
+                }
+            }
+        }
+        
+        func playHitSoundEffect() {
+            hitSoundEffectPlayer?.currentTime = 0
+            hitSoundEffectPlayer?.play()
+        }
     
     // Touch began
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -210,6 +245,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             // Increment the score
             score += 10
             updateScoreLabel()
+            
+            playHitSoundEffect()
         }
     }
     
@@ -266,6 +303,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         self.speed = 1.0
         self.physicsWorld.speed = 1.0
     }
+    
     func startNewRound() {
         isGameRunning = true
         
