@@ -111,7 +111,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 do {
                     bulletTimeSoundPlayer = try AVAudioPlayer(contentsOf: soundURL)
                     bulletTimeSoundPlayer?.numberOfLoops = -1 // Loop indefinitely
-                    bulletTimeSoundPlayer?.volume = 0.7
+                    bulletTimeSoundPlayer?.volume = 0.6
                 } catch {
                     print("Error loading bullet time sound effect: \(error)")
                 }
