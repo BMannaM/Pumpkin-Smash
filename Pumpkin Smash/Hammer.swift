@@ -23,7 +23,7 @@ class Hammer: SKSpriteNode {
         let texture = SKTexture(imageNamed: "hammer")
         super.init(texture: texture, color: .clear, size: texture.size())
         
-        self.anchorPoint = CGPoint(x: 0, y: 0)
+//        self.anchorPoint = CGPoint(x: 0, y: 0)
         self.zPosition = 1
         
         // Set initial angle to show as vertical hammer
@@ -43,15 +43,15 @@ class Hammer: SKSpriteNode {
         handleEndPoint = SKShapeNode(circleOfRadius: 5)
         handleEndPoint.fillColor = .yellow
         handleEndPoint.zPosition = 2
-        handleEndPoint.position = CGPoint(x: 0, y: 0)
+        handleEndPoint.position = CGPoint(x: -size.width/2, y: -size.height/2)
         addChild(handleEndPoint)
         
         // TEST: Purple hammerTopPoint
         hammerTopPoint = SKShapeNode(circleOfRadius: 5)
         hammerTopPoint.fillColor = .purple
         hammerTopPoint.zPosition = 2
-        hammerTopPoint.position = CGPoint(x: size.width, y: size.height)
-        addChild(hammerTopPoint)
+        hammerTopPoint.position = CGPoint(x: size.width/2, y: size.height/2)
+//        addChild(hammerTopPoint)
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -75,7 +75,6 @@ class Hammer: SKSpriteNode {
         }
         // Check if hammer is near the left edge
         else if position.x < edgeThreshold {
-            // Create a duplicate on the right side
             createDuplicateHorizontal(offsetX: screenWidth)
         }
         
@@ -100,7 +99,6 @@ class Hammer: SKSpriteNode {
         gameScene?.addChild(duplicate)
     }
     
-    // Handle vertical wrapping
     func handleVerticalWrapping(screenHeight: CGFloat, edgeThreshold: CGFloat) {
         // Remove existing duplicate if any
         duplicateVertical?.removeFromParent()
@@ -113,7 +111,6 @@ class Hammer: SKSpriteNode {
         }
         // Check if hammer is near the bottom edge
         else if position.y < edgeThreshold {
-            // Create a duplicate at the top
             createDuplicateVertical(offsetY: screenHeight)
         }
         
@@ -129,21 +126,14 @@ class Hammer: SKSpriteNode {
         duplicateVertical = Hammer()
         guard let duplicate = duplicateVertical else { return }
         
-        // Set the duplicate's position and rotation to match the original
         duplicate.position = CGPoint(x: position.x, y: position.y + offsetY)
         duplicate.zRotation = zRotation
-        
-        // The duplicate should not have a physics body
         duplicate.physicsBody = nil
-        
-        // Set the same alpha as the original hammer
         duplicate.alpha = alpha
         
-        // Add the duplicate to the scene
         gameScene?.addChild(duplicate)
     }
     
-    // Handle diagonal wrapping (when near corners)
     func handleDiagonalWrapping(screenWidth: CGFloat, screenHeight: CGFloat, edgeThreshold: CGFloat) {
         // Remove existing duplicate if any
         duplicateDiagonal?.removeFromParent()
@@ -170,17 +160,11 @@ class Hammer: SKSpriteNode {
         duplicateDiagonal = Hammer()
         guard let duplicate = duplicateDiagonal else { return }
         
-        // Set the duplicate's position and rotation to match the original
         duplicate.position = CGPoint(x: position.x + offsetX, y: position.y + offsetY)
         duplicate.zRotation = zRotation
-        
-        // The duplicate should not have a physics body
         duplicate.physicsBody = nil
-        
-        // Set the same alpha as the original hammer
         duplicate.alpha = alpha
         
-        // Add the duplicate to the scene
         gameScene?.addChild(duplicate)
     }
 }
