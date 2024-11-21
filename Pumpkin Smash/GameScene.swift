@@ -34,9 +34,15 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var isGameRunning = false
     var backgroundMusicPlayer: AVAudioPlayer?
     var hitSoundEffectPlayer: AVAudioPlayer?
+    var bulletTimeSoundPlayer: AVAudioPlayer?
     
     override func didMove(to view: SKView) {
         physicsWorld.contactDelegate = self
+        
+        if let background = childNode(withName: "background") as? SKSpriteNode {
+                background.size = size
+                background.zPosition = -1
+            }
         
         hammer = Hammer()
         hammer.position = CGPoint(x: size.width / 2, y: size.height / 2)
@@ -64,6 +70,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         setupBackgroundMusic()
         setupHitSoundEffect()
+        setupBulletTimeSoundEffect()
     }
     
     func updateScoreLabel() {
@@ -97,6 +104,18 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         func playHitSoundEffect() {
             hitSoundEffectPlayer?.currentTime = 0
             hitSoundEffectPlayer?.play()
+        }
+    
+    func setupBulletTimeSoundEffect() {
+            if let soundURL = Bundle.main.url(forResource: "bullet time sound", withExtension: "wav") {
+                do {
+                    bulletTimeSoundPlayer = try AVAudioPlayer(contentsOf: soundURL)
+                    bulletTimeSoundPlayer?.numberOfLoops = -1 // Loop indefinitely
+                    bulletTimeSoundPlayer?.volume = 0.7
+                } catch {
+                    print("Error loading bullet time sound effect: \(error)")
+                }
+            }
         }
     
     // Touch began
@@ -297,11 +316,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     func enableBulletTime() {
         self.speed = bulletTimeSpeed
         self.physicsWorld.speed = bulletTimeSpeed
+        bulletTimeSoundPlayer?.play()
     }
     
     func disableBulletTime() {
         self.speed = 1.0
         self.physicsWorld.speed = 1.0
+        bulletTimeSoundPlayer?.stop()
     }
     
     func startNewRound() {
