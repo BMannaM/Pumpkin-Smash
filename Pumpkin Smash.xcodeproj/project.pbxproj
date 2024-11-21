@@ -16,6 +16,9 @@
 		3B38F3182CEC226400B3561C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3B38F3172CEC226400B3561C /* Assets.xcassets */; };
 		3B38F31B2CEC226400B3561C /* Base in Resources */ = {isa = PBXBuildFile; fileRef = 3B38F31A2CEC226400B3561C /* Base */; };
 		3B38F3222CEC40B500B3561C /* Hammer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B38F3212CEC40B500B3561C /* Hammer.swift */; };
+		3B6979422CEED10D00836107 /* smash sound.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 3B6979412CEED10D00836107 /* smash sound.mp3 */; };
+		3B6979442CEED11500836107 /* bullet time sound.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3B6979432CEED11500836107 /* bullet time sound.wav */; };
+		3B6979462CEED11B00836107 /* game bgm.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 3B6979452CEED11B00836107 /* game bgm.mp3 */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -29,6 +32,9 @@
 		3B38F3172CEC226400B3561C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		3B38F31A2CEC226400B3561C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		3B38F3212CEC40B500B3561C /* Hammer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Hammer.swift; sourceTree = "<group>"; };
+		3B6979412CEED10D00836107 /* smash sound.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = "smash sound.mp3"; sourceTree = "<group>"; };
+		3B6979432CEED11500836107 /* bullet time sound.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = "bullet time sound.wav"; sourceTree = "<group>"; };
+		3B6979452CEED11B00836107 /* game bgm.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = "game bgm.mp3"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -70,8 +76,19 @@
 				3B38F3142CEC226300B3561C /* Main.storyboard */,
 				3B38F3172CEC226400B3561C /* Assets.xcassets */,
 				3B38F3192CEC226400B3561C /* LaunchScreen.storyboard */,
+				3B6979472CEED1A500836107 /* Sound */,
 			);
 			path = "Pumpkin Smash";
+			sourceTree = "<group>";
+		};
+		3B6979472CEED1A500836107 /* Sound */ = {
+			isa = PBXGroup;
+			children = (
+				3B6979412CEED10D00836107 /* smash sound.mp3 */,
+				3B6979432CEED11500836107 /* bullet time sound.wav */,
+				3B6979452CEED11B00836107 /* game bgm.mp3 */,
+			);
+			path = Sound;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -134,8 +151,11 @@
 			files = (
 				3B38F30D2CEC226300B3561C /* GameScene.sks in Resources */,
 				3B38F3162CEC226300B3561C /* Base in Resources */,
+				3B6979462CEED11B00836107 /* game bgm.mp3 in Resources */,
+				3B6979422CEED10D00836107 /* smash sound.mp3 in Resources */,
 				3B38F3182CEC226400B3561C /* Assets.xcassets in Resources */,
 				3B38F30F2CEC226300B3561C /* Actions.sks in Resources */,
+				3B6979442CEED11500836107 /* bullet time sound.wav in Resources */,
 				3B38F31B2CEC226400B3561C /* Base in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

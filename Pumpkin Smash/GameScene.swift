@@ -256,16 +256,17 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         if collision == PhysicsCategory.hammer | PhysicsCategory.pumpkin {
             // Determine which node is the pumpkin
-            let pumpkinNode = contact.bodyA.categoryBitMask == PhysicsCategory.pumpkin ? contact.bodyA.node : contact.bodyB.node
+            if let pumpkinNode = (contact.bodyA.categoryBitMask == PhysicsCategory.pumpkin ? contact.bodyA.node : contact.bodyB.node) {
+                // Remove the pumpkin from the scene
+                pumpkinNode.removeFromParent()
+                
+                // Increment the score
+                score += 10
+                updateScoreLabel()
+                
+                playHitSoundEffect()
+            }
             
-            // Remove the pumpkin from the scene
-            pumpkinNode?.removeFromParent()
-            
-            // Increment the score
-            score += 10
-            updateScoreLabel()
-            
-            playHitSoundEffect()
         }
     }
     
